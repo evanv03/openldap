@@ -737,7 +737,6 @@ memberof_op_add( Operation *op, SlapReply *rs )
 	sc->sc_private = sc+1;
 	sc->sc_response = memberof_res_add;
 	sc->sc_cleanup = memberof_cleanup;
-	sc->sc_writewait = 0;
 	mci = sc->sc_private;
 	mci->on = on;
 	mci->member = NULL;
@@ -772,7 +771,6 @@ memberof_op_delete( Operation *op, SlapReply *rs )
 	sc->sc_private = sc+1;
 	sc->sc_response = memberof_res_delete;
 	sc->sc_cleanup = memberof_cleanup;
-	sc->sc_writewait = 0;
 	mci = sc->sc_private;
 	mci->on = on;
 	mci->member = NULL;
@@ -1191,7 +1189,6 @@ done2:;
 	sc->sc_private = sc+1;
 	sc->sc_response = memberof_res_modify;
 	sc->sc_cleanup = memberof_cleanup;
-	sc->sc_writewait = 0;
 	mci = sc->sc_private;
 	mci->on = on;
 	mci->member = NULL;
@@ -1237,7 +1234,6 @@ memberof_op_modrdn( Operation *op, SlapReply *rs )
 	sc->sc_private = sc+1;
 	sc->sc_response = memberof_res_modrdn;
 	sc->sc_cleanup = memberof_cleanup;
-	sc->sc_writewait = 0;
 	mci = sc->sc_private;
 	mci->on = on;
 	mci->member = NULL;

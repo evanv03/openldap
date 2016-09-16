@@ -97,7 +97,6 @@ relay_back_response_cb( Operation *op, SlapReply *rs )
 		(rcb)->rcb_sc.sc_next = (op)->o_callback;	\
 		(rcb)->rcb_sc.sc_response = relay_back_response_cb; \
 		(rcb)->rcb_sc.sc_cleanup = 0;			\
-		(rcb)->rcb_sc.sc_writewait = 0;			\
 		(rcb)->rcb_sc.sc_private = (op)->o_bd;		\
 		(op)->o_callback = (slap_callback *) (rcb);	\
 }
@@ -195,7 +194,7 @@ static int
 relay_back_op( Operation *op, SlapReply *rs, int which )
 {
 	BackendDB	*bd;
-	BackendInfo	*bi;
+	BI_op_bind	*func;
 	slap_mask_t	fail_mode = relay_fail_modes[which].rf_op;
 	int		rc = ( fail_mode & RB_ERR_MASK );
 
@@ -204,12 +203,12 @@ relay_back_op( Operation *op, SlapReply *rs, int which )
 		if ( fail_mode & RB_BDERR )
 			return rs->sr_err;	/* sr_err was set above */
 
-	} else if ( (&( bi = bd->bd_info )->bi_op_bind)[which] ) {
+	} else if ( (func = (&bd->be_bind)[which]) != 0 ) {
 		relay_callback	rcb;
 
 		relay_back_add_cb( &rcb, op );
 		RELAY_WRAP_OP( op, bd, which, {
-			rc = (&bi->bi_op_bind)[which]( op, rs );
+			rc = func( op, rs );
 		});
 		relay_back_remove_cb( &rcb, op );
 

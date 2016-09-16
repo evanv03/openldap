@@ -923,7 +923,7 @@ notfound:
 				goto done;
 			}
 
-			rs->sr_err = mdb_entry_decode( op, ltid, &edata, id, &e );
+			rs->sr_err = mdb_entry_decode( op, ltid, &edata, &e );
 			if ( rs->sr_err ) {
 				rs->sr_err = LDAP_OTHER;
 				rs->sr_text = "internal error in mdb_entry_decode";

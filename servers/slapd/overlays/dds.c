@@ -442,7 +442,6 @@ dds_op_add( Operation *op, SlapReply *rs )
 			sc->sc_response = dds_counter_cb;
 			sc->sc_private = di;
 			sc->sc_next = op->o_callback;
-			sc->sc_writewait = 0;
 
 			op->o_callback = sc;
 		}
@@ -477,7 +476,6 @@ dds_op_delete( Operation *op, SlapReply *rs )
 			sc->sc_cleanup = dds_freeit_cb;
 			sc->sc_response = dds_counter_cb;
 			sc->sc_private = di;
-			sc->sc_writewait = 0;
 			sc->sc_next = op->o_callback;
 	
 			op->o_callback = sc;

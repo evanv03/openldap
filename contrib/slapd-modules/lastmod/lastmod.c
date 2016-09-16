@@ -736,7 +736,9 @@ lastmod_response( Operation *op, SlapReply *rs )
 }
 
 static int
-lastmod_db_init( BackendDB *be, ConfigReply *cr )
+lastmod_db_init(
+	BackendDB *be
+)
 {
 	slap_overinst		*on = (slap_overinst *)be->bd_info;
 	lastmod_info_t		*lmi;
@@ -825,7 +827,9 @@ lastmod_db_config(
 }
 
 static int
-lastmod_db_open( BackendDB *be, ConfigReply *cr )
+lastmod_db_open(
+	BackendDB *be
+)
 {
 	slap_overinst	*on = (slap_overinst *) be->bd_info;
 	lastmod_info_t	*lmi = (lastmod_info_t *)on->on_bi.bi_private;
@@ -900,7 +904,9 @@ lastmod_db_open( BackendDB *be, ConfigReply *cr )
 }
 
 static int
-lastmod_db_destroy( BackendDB *be, ConfigReply *cr )
+lastmod_db_destroy(
+	BackendDB *be
+)
 {
 	slap_overinst	*on = (slap_overinst *)be->bd_info;
 	lastmod_info_t	*lmi = (lastmod_info_t *)on->on_bi.bi_private;

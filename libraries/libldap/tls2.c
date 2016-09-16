@@ -43,7 +43,9 @@ static tls_impl *tls_imp = &ldap_int_tls_impl;
 
 #endif /* HAVE_TLS */
 
+#ifdef LDAP_DEVEL
 #define LDAP_USE_NON_BLOCKING_TLS
+#endif /* LDAP_DEVEL */
 
 /* RFC2459 minimum required set of supported attribute types
  * in a certificate DN
@@ -115,10 +117,6 @@ ldap_int_tls_destroy( struct ldapoptions *lo )
 	if ( lo->ldo_tls_dhfile ) {
 		LDAP_FREE( lo->ldo_tls_dhfile );
 		lo->ldo_tls_dhfile = NULL;
-	}
-	if ( lo->ldo_tls_ecname ) {
-		LDAP_FREE( lo->ldo_tls_ecname );
-		lo->ldo_tls_ecname = NULL;
 	}
 	if ( lo->ldo_tls_cacertfile ) {
 		LDAP_FREE( lo->ldo_tls_cacertfile );
@@ -234,10 +232,6 @@ ldap_int_tls_init_ctx( struct ldapoptions *lo, int is_server )
 		lts.lt_dhfile = LDAP_STRDUP( lts.lt_dhfile );
 		__atoe( lts.lt_dhfile );
 	}
-	if ( lts.lt_ecname ) {
-		lts.lt_ecname = LDAP_STRDUP( lts.lt_ecname );
-		__atoe( lts.lt_ecname );
-	}
 #endif
 	lo->ldo_tls_ctx = ti->ti_ctx_new( lo );
 	if ( lo->ldo_tls_ctx == NULL ) {
@@ -263,7 +257,6 @@ error_exit:
 	LDAP_FREE( lts.lt_crlfile );
 	LDAP_FREE( lts.lt_cacertdir );
 	LDAP_FREE( lts.lt_dhfile );
-	LDAP_FREE( lts.lt_ecname );
 #endif
 	return rc;
 }
@@ -506,7 +499,7 @@ ldap_pvt_tls_check_hostname( LDAP *ld, void *s, const char *name_in )
 }
 
 int
-ldap_pvt_tls_config( LDAP *ld, int option, const char *arg )
+ldap_int_tls_config( LDAP *ld, int option, const char *arg )
 {
 	int i;
 
@@ -641,10 +634,6 @@ ldap_pvt_tls_get_option( LDAP *ld, int option, void *arg )
 		*(char **)arg = lo->ldo_tls_dhfile ?
 			LDAP_STRDUP( lo->ldo_tls_dhfile ) : NULL;
 		break;
-	case LDAP_OPT_X_TLS_ECNAME:
-		*(char **)arg = lo->ldo_tls_ecname ?
-			LDAP_STRDUP( lo->ldo_tls_ecname ) : NULL;
-		break;
 	case LDAP_OPT_X_TLS_CRLFILE:	/* GnuTLS only */
 		*(char **)arg = lo->ldo_tls_crlfile ?
 			LDAP_STRDUP( lo->ldo_tls_crlfile ) : NULL;
@@ -686,53 +675,6 @@ ldap_pvt_tls_get_option( LDAP *ld, int option, void *arg )
 	case LDAP_OPT_X_TLS_CONNECT_ARG:
 		*(void **)arg = lo->ldo_tls_connect_arg;
 		break;
-	case LDAP_OPT_X_TLS_VERSION: {
-		void *sess = NULL;
-		const char *retval = NULL;
-		if ( ld != NULL ) {
-			LDAPConn *conn = ld->ld_defconn;
-			if ( conn != NULL ) {
-				Sockbuf *sb = conn->lconn_sb;
-				sess = ldap_pvt_tls_sb_ctx( sb );
-				if ( sess != NULL )
-					retval = ldap_pvt_tls_get_version( sess );
-			}
-		}
-		*(char **)arg = retval ? LDAP_STRDUP( retval ) : NULL;
-		break;
-	}
-	case LDAP_OPT_X_TLS_CIPHER: {
-		void *sess = NULL;
-		const char *retval = NULL;
-		if ( ld != NULL ) {
-			LDAPConn *conn = ld->ld_defconn;
-			if ( conn != NULL ) {
-				Sockbuf *sb = conn->lconn_sb;
-				sess = ldap_pvt_tls_sb_ctx( sb );
-				if ( sess != NULL )
-					retval = ldap_pvt_tls_get_cipher( sess );
-			}
-		}
-		*(char **)arg = retval ? LDAP_STRDUP( retval ) : NULL;
-		break;
-	}
-	case LDAP_OPT_X_TLS_PEERCERT: {
-		void *sess = NULL;
-		struct berval *bv = arg;
-		bv->bv_len = 0;
-		bv->bv_val = NULL;
-		if ( ld != NULL ) {
-			LDAPConn *conn = ld->ld_defconn;
-			if ( conn != NULL ) {
-				Sockbuf *sb = conn->lconn_sb;
-				sess = ldap_pvt_tls_sb_ctx( sb );
-				if ( sess != NULL )
-					return ldap_pvt_tls_get_peercert( sess, bv );
-			}
-		}
-		break;
-	}
-
 	default:
 		return -1;
 	}
@@ -810,10 +752,6 @@ ldap_pvt_tls_set_option( LDAP *ld, int option, void *arg )
 	case LDAP_OPT_X_TLS_DHFILE:
 		if ( lo->ldo_tls_dhfile ) LDAP_FREE( lo->ldo_tls_dhfile );
 		lo->ldo_tls_dhfile = arg ? LDAP_STRDUP( (char *) arg ) : NULL;
-		return 0;
-	case LDAP_OPT_X_TLS_ECNAME:
-		if ( lo->ldo_tls_ecname ) LDAP_FREE( lo->ldo_tls_ecname );
-		lo->ldo_tls_ecname = arg ? LDAP_STRDUP( (char *) arg ) : NULL;
 		return 0;
 	case LDAP_OPT_X_TLS_CRLFILE:	/* GnuTLS only */
 		if ( lo->ldo_tls_crlfile ) LDAP_FREE( lo->ldo_tls_crlfile );
@@ -1042,34 +980,6 @@ ldap_pvt_tls_get_my_dn( void *s, struct berval *dn, LDAPDN_rewrite_dummy *func, 
 	if ( rc == LDAP_SUCCESS )
 		rc = ldap_X509dn2bv(&der_dn, dn, (LDAPDN_rewrite_func *)func, flags );
 	return rc;
-}
-
-int
-ldap_pvt_tls_get_unique( void *s, struct berval *buf, int is_server )
-{
-	tls_session *session = s;
-	return tls_imp->ti_session_unique( session, buf, is_server );
-}
-
-const char *
-ldap_pvt_tls_get_version( void *s )
-{
-	tls_session *session = s;
-	return tls_imp->ti_session_version( session );
-}
-
-const char *
-ldap_pvt_tls_get_cipher( void *s )
-{
-	tls_session *session = s;
-	return tls_imp->ti_session_cipher( session );
-}
-
-int
-ldap_pvt_tls_get_peercert( void *s, struct berval *der )
-{
-	tls_session *session = s;
-	return tls_imp->ti_session_peercert( session, der );
 }
 #endif /* HAVE_TLS */
 

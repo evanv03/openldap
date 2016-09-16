@@ -27,7 +27,9 @@
 #ifndef SLAPD_META_H
 #define SLAPD_META_H
 
+#ifdef LDAP_DEVEL
 #define SLAPD_META_CLIENT_PR 1
+#endif /* LDAP_DEVEL */
 
 #include "proto-meta.h"
 

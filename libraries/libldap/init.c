@@ -281,7 +281,7 @@ static void openldap_ldap_init_w_conf(
 				break;
 			case ATTR_TLS:
 #ifdef HAVE_TLS
-			   	ldap_pvt_tls_config( NULL, attrs[i].offset, opt );
+			   	ldap_int_tls_config( NULL, attrs[i].offset, opt );
 #endif
 				break;
 			case ATTR_OPT_TV: {
@@ -440,7 +440,7 @@ static void openldap_ldap_init_w_env(
 			break;
 		case ATTR_TLS:
 #ifdef HAVE_TLS
-		   	ldap_pvt_tls_config( NULL, attrs[i].offset, value );
+		   	ldap_int_tls_config( NULL, attrs[i].offset, value );
 #endif			 	
 		   	break;
 		case ATTR_OPT_TV: {
@@ -596,10 +596,6 @@ void ldap_int_initialize_global_options( struct ldapoptions *gopts, int *dbglvl 
 char * ldap_int_hostname = NULL;
 #endif
 
-#ifdef LDAP_R_COMPILE
-int	ldap_int_stackguard;
-#endif
-
 void ldap_int_initialize( struct ldapoptions *gopts, int *dbglvl )
 {
 	if ( gopts->ldo_valid == LDAP_INITIALIZED ) {
@@ -667,12 +663,6 @@ void ldap_int_initialize( struct ldapoptions *gopts, int *dbglvl )
 	if( getenv("LDAPNOINIT") != NULL ) {
 		return;
 	}
-
-#ifdef LDAP_R_COMPILE
-	if( getenv("LDAPSTACKGUARD") != NULL ) {
-		ldap_int_stackguard = 1;
-	}
-#endif
 
 #ifdef HAVE_CYRUS_SASL
 	{

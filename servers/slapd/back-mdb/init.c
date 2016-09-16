@@ -31,7 +31,6 @@ static const struct berval mdmi_databases[] = {
 	BER_BVC("ad2i"),
 	BER_BVC("dn2i"),
 	BER_BVC("id2e"),
-	BER_BVC("id2v"),
 	BER_BVNULL
 };
 
@@ -64,8 +63,6 @@ mdb_db_init( BackendDB *be, ConfigReply *cr )
 
 	mdb->mi_mapsize = DEFAULT_MAPSIZE;
 	mdb->mi_rtxn_size = DEFAULT_RTXN_SIZE;
-	mdb->mi_multi_hi = UINT_MAX;
-	mdb->mi_multi_lo = UINT_MAX;
 
 	be->be_private = mdb;
 	be->be_cf_ocs = be->bd_info->bi_cf_ocs;
@@ -204,8 +201,6 @@ mdb_db_open( BackendDB *be, ConfigReply *cr )
 		} else {
 			if ( i == MDB_DN2ID )
 				flags |= MDB_DUPSORT;
-			if ( i == MDB_ID2VAL )
-				flags ^= MDB_INTEGERKEY|MDB_DUPSORT;
 			if ( !(slapMode & SLAP_TOOL_READONLY) )
 				flags |= MDB_CREATE;
 		}
@@ -229,8 +224,6 @@ mdb_db_open( BackendDB *be, ConfigReply *cr )
 
 		if ( i == MDB_ID2ENTRY )
 			mdb_set_compare( txn, mdb->mi_dbis[i], mdb_id_compare );
-		else if ( i == MDB_ID2VAL )
-			mdb_set_compare( txn, mdb->mi_dbis[i], mdb_id2v_compare );
 		else if ( i == MDB_DN2ID ) {
 			MDB_cursor *mc;
 			MDB_val key, data;
@@ -464,7 +457,6 @@ mdb_back_initialize(
 	bi->bi_op_search = mdb_search;
 
 	bi->bi_op_unbind = 0;
-	bi->bi_op_txn = mdb_txn;
 
 	bi->bi_extended = mdb_extended;
 
@@ -489,7 +481,6 @@ mdb_back_initialize(
 	bi->bi_tool_sync = 0;
 	bi->bi_tool_dn2id_get = mdb_tool_dn2id_get;
 	bi->bi_tool_entry_modify = mdb_tool_entry_modify;
-	bi->bi_tool_entry_delete = mdb_tool_entry_delete;
 
 	bi->bi_connection_init = 0;
 	bi->bi_connection_destroy = 0;

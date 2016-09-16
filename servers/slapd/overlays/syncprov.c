@@ -28,7 +28,9 @@
 #include "config.h"
 #include "ldap_rq.h"
 
+#ifdef LDAP_DEVEL
 #define	CHECK_CSN	1
+#endif
 
 /* A modify request on a particular entry */
 typedef struct modinst {
@@ -2499,7 +2501,7 @@ syncprov_op_search( Operation *op, SlapReply *rs )
 		syncops so = {0};
 		fbase_cookie fc;
 		opcookie opc;
-		slap_callback sc = {0};
+		slap_callback sc;
 
 		fc.fss = &so;
 		fc.fbase = 0;

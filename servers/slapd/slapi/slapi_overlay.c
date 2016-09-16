@@ -82,7 +82,6 @@ slapi_op_internal_p( Operation *op, SlapReply *rs, slap_callback *cb )
 		cb->sc_response = slapi_over_response;
 		cb->sc_cleanup = slapi_over_cleanup;
 		cb->sc_private = pb;
-		cb->sc_writewait = 0;
 		cb->sc_next = op->o_callback;
 		op->o_callback = cb;
 	}
@@ -735,7 +734,6 @@ slapi_over_access_allowed(
 
 	cb.sc_response = NULL;
 	cb.sc_cleanup = NULL;
-	cb.sc_writewait = NULL;
 
 	pb = SLAPI_OPERATION_PBLOCK( op );
 
@@ -800,7 +798,6 @@ slapi_over_acl_group(
 
 		cb.sc_response = NULL;
 		cb.sc_cleanup = NULL;
-		cb.sc_writewait = NULL;
 
 		pb = SLAPI_OPERATION_PBLOCK( op );
 

@@ -25,7 +25,7 @@ To use the overlay, add:
 	moduleload <path to>smbk5pwd.so
 	...
 
-	database mdb
+	database bdb
 	...
 	overlay smbk5pwd
 

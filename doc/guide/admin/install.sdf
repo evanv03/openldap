@@ -186,7 +186,7 @@ variables.
 >	./configure [options] [variable=value ...]
 
 As an example, let's assume that we want to install OpenLDAP with
-MDB backend and TCP Wrappers support.  By default, MDB
+BDB backend and TCP Wrappers support.  By default, BDB
 is enabled and TCP Wrappers is not.  So, we just need to specify
 {{EX:--enable-wrappers}} to include TCP Wrappers support:
 

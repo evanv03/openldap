@@ -37,6 +37,7 @@
 
 #include "config.h"
 
+#ifdef LDAP_DEVEL
 /*
  * Control that allows to access the private DB
  * instead of the public one
@@ -52,6 +53,7 @@
  * Monitoring
  */
 #define PCACHE_MONITOR
+#endif
 
 /* query cache structs */
 /* query */
@@ -2799,16 +2801,17 @@ pcache_op_privdb(
 	/* map tag to operation */
 	type = slap_req2op( op->o_tag );
 	if ( type != SLAP_OP_LAST ) {
-		BackendInfo	*bi = cm->db.bd_info;
+		BI_op_func	**func;
 		int		rc;
 
 		/* execute, if possible */
-		if ( (&bi->bi_op_bind)[ type ] ) {
+		func = &cm->db.be_bind;
+		if ( func[ type ] != NULL ) {
 			Operation	op2 = *op;
 	
 			op2.o_bd = &cm->db;
 
-			rc = (&bi->bi_op_bind)[ type ]( &op2, rs );
+			rc = func[ type ]( &op2, rs );
 			if ( type == SLAP_OP_BIND && rc == LDAP_SUCCESS ) {
 				op->o_conn->c_authz_cookie = cm->db.be_private;
 			}
@@ -2838,7 +2841,7 @@ pcache_op_bind(
 	QueryTemplate *temp;
 	Entry *e;
 	slap_callback	cb = { 0 }, *sc;
-	bindinfo bi = { 0 };
+	bindinfo bi;
 	bindcacheinfo *bci;
 	Operation op2;
 	int rc;
@@ -2868,6 +2871,7 @@ pcache_op_bind(
 	op2 = *op;
 	op2.o_dn = op->o_bd->be_rootdn;
 	op2.o_ndn = op->o_bd->be_rootndn;
+	bi.bi_flags = 0;
 
 	op2.o_bd = &cm->db;
 	e = NULL;
@@ -2896,8 +2900,11 @@ pcache_op_bind(
 	 */
 	bi.bi_cm = cm;
 	bi.bi_templ = temp;
+	bi.bi_cq = NULL;
+	bi.bi_si = NULL;
 
 	bi.bi_cb.sc_response = pc_bind_search;
+	bi.bi_cb.sc_cleanup = NULL;
 	bi.bi_cb.sc_private = &bi;
 	cb.sc_private = &bi;
 	cb.sc_response = pc_bind_resp;
@@ -2933,7 +2940,6 @@ pcache_op_bind(
 		sc->sc_response = pc_bind_save;
 		sc->sc_cleanup = NULL;
 		sc->sc_private = sc+1;
-		sc->sc_writewait = NULL;
 		bci = sc->sc_private;
 		sc->sc_next = op->o_callback;
 		op->o_callback = sc;
@@ -3126,7 +3132,6 @@ pcache_op_search(
 		cb->sc_response = pcache_response;
 		cb->sc_cleanup = pcache_op_cleanup;
 		cb->sc_private = (cb+1);
-		cb->sc_writewait = 0;
 		si = cb->sc_private;
 		si->on = on;
 		si->query = query;

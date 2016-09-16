@@ -701,7 +701,6 @@ accesslog_purge( void *ctx, void *arg )
 			}
 			ch_free( pd.ndn[i].bv_val );
 			ch_free( pd.dn[i].bv_val );
-			ldap_pvt_thread_pool_pausecheck( &connection_pool );
 		}
 		ch_free( pd.ndn );
 		ch_free( pd.dn );
@@ -1959,10 +1958,6 @@ accesslog_op_mod( Operation *op, SlapReply *rs )
 		return SLAP_CB_CONTINUE;
 		/* give this a unique timestamp */
 		op->o_tincr++;
-		if ( op->o_tincr >= 1000000 ) {
-			op->o_tincr -= 1000000;
-			op->o_time++;
-		}
 	}
 
 	logop = accesslog_op2logop( op );
@@ -2391,6 +2386,9 @@ int accesslog_initialize()
 				0, 0, 0 );
 			return -1;
 		}
+#ifndef LDAP_DEVEL
+		(*lattrs[i].ad)->ad_type->sat_flags |= SLAP_AT_HIDE;
+#endif
 	}
 
 	for ( i=0; locs[i].ot; i++ ) {
@@ -2403,6 +2401,9 @@ int accesslog_initialize()
 				0, 0, 0 );
 			return -1;
 		}
+#ifndef LDAP_DEVEL
+		(*locs[i].oc)->soc_flags |= SLAP_OC_HIDE;
+#endif
 	}
 
 	return overlay_register(&accesslog);

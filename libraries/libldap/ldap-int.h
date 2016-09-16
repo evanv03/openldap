@@ -165,7 +165,6 @@ struct ldaptls {
 	char		*lt_ciphersuite;
 	char		*lt_crlfile;
 	char		*lt_randfile;	/* OpenSSL only */
-	char		*lt_ecname;		/* OpenSSL only */
 	int		lt_protocol_min;
 };
 #endif
@@ -251,7 +250,6 @@ struct ldapoptions {
 #define ldo_tls_certfile	ldo_tls_info.lt_certfile
 #define ldo_tls_keyfile	ldo_tls_info.lt_keyfile
 #define ldo_tls_dhfile	ldo_tls_info.lt_dhfile
-#define ldo_tls_ecname	ldo_tls_info.lt_ecname
 #define ldo_tls_cacertfile	ldo_tls_info.lt_cacertfile
 #define ldo_tls_cacertdir	ldo_tls_info.lt_cacertdir
 #define ldo_tls_ciphersuite	ldo_tls_info.lt_ciphersuite
@@ -307,7 +305,6 @@ typedef struct ldap_conn {
 #ifdef HAVE_CYRUS_SASL
 	void		*lconn_sasl_authctx;	/* context for bind */
 	void		*lconn_sasl_sockctx;	/* for security layer */
-	void		*lconn_sasl_cbind;		/* for channel binding */
 #endif
 #ifdef HAVE_GSSAPI
 	void		*lconn_gss_ctx;		/* gss_ctx_id_t */
@@ -495,7 +492,6 @@ struct ldap {
 #ifdef LDAP_R_COMPILE
 LDAP_V ( ldap_pvt_thread_mutex_t ) ldap_int_resolv_mutex;
 LDAP_V ( ldap_pvt_thread_mutex_t ) ldap_int_hostname_mutex;
-LDAP_V ( int ) ldap_int_stackguard;
 
 #ifdef HAVE_GSSAPI
 LDAP_V( ldap_pvt_thread_mutex_t ) ldap_int_gssapi_mutex;
@@ -647,6 +643,14 @@ LDAP_F (void) ldap_int_utils_init LDAP_P(( void ));
  * in print.c
  */
 LDAP_F (int) ldap_log_printf LDAP_P((LDAP *ld, int level, const char *fmt, ...)) LDAP_GCCATTR((format(printf, 3, 4)));
+
+/*
+ * in cache.c
+ */
+LDAP_F (void) ldap_add_request_to_cache LDAP_P(( LDAP *ld, ber_tag_t msgtype,
+        BerElement *request ));
+LDAP_F (void) ldap_add_result_to_cache LDAP_P(( LDAP *ld, LDAPMessage *result ));
+LDAP_F (int) ldap_check_cache LDAP_P(( LDAP *ld, ber_tag_t msgtype, BerElement *request ));
 
 /*
  * in controls.c
@@ -853,6 +857,9 @@ LDAP_F (char *) ldap_int_parse_numericoid LDAP_P((
 /*
  * in tls.c
  */
+LDAP_F (int) ldap_int_tls_config LDAP_P(( LDAP *ld,
+	int option, const char *arg ));
+
 LDAP_F (int) ldap_int_tls_start LDAP_P(( LDAP *ld,
 	LDAPConn *conn, LDAPURLDesc *srv ));
 

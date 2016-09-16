@@ -109,7 +109,7 @@ denyop_func( Operation *op, SlapReply *rs )
 
 static int
 denyop_over_init(
-	BackendDB *be, ConfigReply *cr
+	BackendDB *be
 )
 {
 	slap_overinst		*on = (slap_overinst *) be->bd_info;
@@ -204,7 +204,7 @@ denyop_config(
 
 static int
 denyop_destroy(
-	BackendDB *be, ConfigReply *cr
+	BackendDB *be
 )
 {
 	slap_overinst	*on = (slap_overinst *) be->bd_info;

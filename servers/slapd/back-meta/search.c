@@ -1648,9 +1648,8 @@ err_pr:;
 						if ( rs->sr_nentries == op->ors_slimit
 							|| META_BACK_ONERR_STOP( mi ) )
 						{
-							const char *save_text;
+							const char *save_text = rs->sr_text;
 got_err:
-							save_text = rs->sr_text;
 							savepriv = op->o_private;
 							op->o_private = (void *)i;
 							rs->sr_text = candidates[ i ].sr_text;
