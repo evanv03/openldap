@@ -52,10 +52,6 @@ extern "C" {
 #endif
 
 
-// setup is called when you setup the password database.
-
-extern GoInterface setup(char* p0);
-
 extern int setpass(char* p0, char* p1, char* p2);
 
 extern int get(char* p0, char* p1);

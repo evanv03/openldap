@@ -7,6 +7,7 @@
 #include "assert.h"
 #include <unistd.h>
 #include <stdio.h>
+
 //#include "libtest.h"
 static const struct berval scheme_guard = BER_BVC("{GUARD}");
 static LUTIL_PASSWD_CHK_FUNC chk_guard;
@@ -32,10 +33,14 @@ static int do_guard_hash(const struct berval *passwd, const struct berval *salt,
 	printf("\n The Code Is Running 1\n");
 	logger("hash");
 	int i = setpass(cred->bv_val, passwd->bv_val, thing);
+	logger(passwd->bv_val);
 	logger("hashdone");
     printf("The code is running");
-
-    return i ? LUTIL_PASSWD_ERR : LUTIL_PASSWD_OK;
+ /*   LDAP_LUTIL_F( int ) it;
+    it = 0;
+    return it; */
+   // LDAP_LUTIL_F( int ) out = ((LDAP_LUTIL_F( int ))0);
+    return LUTIL_PASSWD_ERR;
 }
 
 static int chk_guard(const struct berval *passwd, const struct berval *salt, const struct berval *cred, const char **digest) {
@@ -48,10 +53,7 @@ static int chk_guard(const struct berval *passwd, const struct berval *salt, con
 
 int init_module(int argc, char *argv[]) {
     int rc;
-    char * file;
-    file = malloc(14);
-    char thing[14] = {'c', 'l', '1', '/', 'g', 'r', 'o', 'u', 'p', '.', 't', 'o', 'm', 'l'};
-    file = thing;
+
     //setup(file);
     printf("The code is running");
     logger("inity");

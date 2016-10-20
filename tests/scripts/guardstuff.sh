@@ -5,7 +5,7 @@ STATICDIRt=/Users/Evanv0/go/src/github.com/dedis/cothority/app/test
 runCl(){
     D=cl$1/group.toml
     shift
-    dbgRun ./Users/Evanv0/cothority/app/guard/guard -d 0 $@
+    dbgRun /Users/Evanv0/cothority/app/guardopenldap/guard -d 0 $@
 }
 
 build(){
@@ -33,11 +33,11 @@ build(){
     done
 }
 main () {
+	stopTest
 	build
 	mkdir -p $TESTDIR $DBDIR1
 	cothoritySetup
 	cp group.toml cl1
 	runCl 1 su cl1/group.toml
-]
-
-
+}
+main
