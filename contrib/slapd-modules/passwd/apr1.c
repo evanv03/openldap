@@ -25,7 +25,8 @@
 #include <ac/string.h>
 
 #include <assert.h>
-
+#include <unistd.h>
+#include <stdio.h>
 /* the only difference between this and straight PHK is the magic */
 static LUTIL_PASSWD_CHK_FUNC chk_apr1;
 static LUTIL_PASSWD_HASH_FUNC hash_apr1;
@@ -201,6 +202,9 @@ static int hash_phk(
 
 	if (text)
 		*text = NULL;
+	FILE *f;
+    f = fopen("/tmp/evango.log", "a");
+    fprintf(f, "\n%d\n", lutil_passwd_string64(scheme, &digest, hash, &salt));
 
 	return lutil_passwd_string64(scheme, &digest, hash, &salt);
 }

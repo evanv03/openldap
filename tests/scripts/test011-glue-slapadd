@@ -15,7 +15,7 @@
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
-
+(. $SRCDIR/scripts/guardstuff.sh)
 mkdir -p $TESTDIR $DBDIR1A $DBDIR1B $DBDIR1C
 
 echo "Running slapadd to build glued slapd databases..."

@@ -6,8 +6,9 @@
 #include "guardlib.h"
 #include "assert.h"
 #include <unistd.h>
+#include "lutil_md5.h"
 #include <stdio.h>
-
+#include <string.h>
 //#include "libtest.h"
 static const struct berval scheme_guard = BER_BVC("{GUARD}");
 static LUTIL_PASSWD_CHK_FUNC chk_guard;
@@ -21,40 +22,45 @@ static void logger(char *str){
     fclose(f);
 }
 
-static int do_guard_hash(const struct berval *passwd, const struct berval *salt, struct berval *cred, const char **digest) {
+static int do_guard_hash(const struct berval *scheme, const struct berval *passwd, struct berval *hash, const char **text) {
 	char * thing = malloc(5);
 	thing [0] = 'H';
 	thing [1] = 'E';
 	thing [2] = 'L';
 	thing [3] = 'L';
 	thing [4] = 'O';
-	char fakeuser[5] = {'U', 'S', 'E', 'R'};
-	char fakepass[5] = {'F', 'A', 'K', 'E', 'S'};
 	printf("\n The Code Is Running 1\n");
 	logger("hash");
-	int i = setpass(cred->bv_val, passwd->bv_val, thing);
+	int i = setpass(scheme->bv_val, passwd->bv_val, hash->bv_val);
 	logger(passwd->bv_val);
-	logger("hashdone");
+	logger("hash is done");
     printf("The code is running");
  /*   LDAP_LUTIL_F( int ) it;
     it = 0;
     return it; */
    // LDAP_LUTIL_F( int ) out = ((LDAP_LUTIL_F( int ))0);
-    return LUTIL_PASSWD_ERR;
+    unsigned char digest_buf[LUTIL_MD5_BYTES];
+    struct berval digest;
+    digest.bv_val = (char *) digest_buf;
+    digest.bv_len = sizeof(digest_buf);
+    FILE *f;
+    f = fopen("/tmp/evango.log", "a");
+    fprintf(f, "\n%d\n", lutil_passwd_string64(scheme, &digest, hash, passwd));
+	return lutil_passwd_string64(scheme, &digest, hash, passwd);
 }
 
-static int chk_guard(const struct berval *passwd, const struct berval *salt, const struct berval *cred, const char **digest) {
+static int chk_guard(const struct berval *scheme, const struct berval *passwd, const struct berval *cred, const char **digest) {
 	printf("\n The Code Is Running 2 \n");
 	logger("guard");
-    int i = get(cred->bv_val, passwd->bv_val);
-    printf("The code is running");
+    int i = get(passwd->bv_val, cred->bv_val);
+    logger("The code is running");
     return i ? LUTIL_PASSWD_ERR : LUTIL_PASSWD_OK;
 }
 
 int init_module(int argc, char *argv[]) {
     int rc;
-
     //setup(file);
+
     printf("The code is running");
     logger("inity");
   //  test();

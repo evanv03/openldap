@@ -1,0 +1,39 @@
+This is a file to help me in the development of Guard overlay
+
+so far the Operation type seems to hold the keys to the kingdom. By following addpartials blueprint, I can grab the password without ever needing to deal with excess stress.
+It appears as though I can build both an overlay and a module within the same file, so it might be advantageous to build
+the module to intercept the password creation process and pass it variables from op.
+
+slap_overinst is the type that allows one to access all the stuff, need to find out what exactly it has and how to call it
+also need to figure out in which username matches with which password.
+
+HOW TO BUILD THE OVERLAY
+Essentially the overlay is at the initialize stage, when the overlays is added in
+overlay_register, and the various parts of the passwd modified are set to be
+overlay..on_bi.bi_op_(function) = overlay_function
+
+lutil_passwd_hash is where hashing goes down
+
+the definition of an operation is at https://github.com/openldap/openldap/blob/abe4b3f0ca3eadce08e07e8f57e63d97e2353f67/servers/slapd/overlays/ppolicy.c#L1786
+the definitions for threads are stored here https://github.com/openldap/openldap/blob/abe4b3f0ca3eadce08e07e8f57e63d97e2353f67/include/ldap_pvt_thread.h
+This is a good explanation of what a thread is http://softpixel.com/~cwright/programming/threads/threads.c.php
+
+uid is part of an entry depending on the configuration of the file
+the uid is an attribute from the entry
+pa = passwd after ((pa = attr_find( op->oq_add.rs_e->e_attrs, slap_schema.si_ad_userPassword )))
+((pa = attr_find( op->oq_add.rs_e->e_attrs, slap_schema.si_ad_uid )))
+
+ldappasswd only changes passwords, bind authenticates with the new passwords, as does ldap search and all other interactions with the server
+
+
+Construction Plan:
+
+In order to construct the program I will need to use threads to store the Operation value for every single password
+using function. The functions are pretty simple but essentially you set all the processes of the
+Openldap server to your own modified versions that also store the op in the thread.
+
+Step one in construction: understanding thread cleanup
+
+Thread cleanup smbk5pwd_op_cleanup is kinda weird, the function offers itself as a pointer
+
+Need to make it so cleanup does not occur after extended

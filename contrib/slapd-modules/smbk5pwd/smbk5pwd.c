@@ -1151,7 +1151,7 @@ smbk5pwd_initialize(void)
 	smbk5pwd.on_bi.bi_db_destroy = smbk5pwd_db_destroy;
 
 	smbk5pwd.on_bi.bi_extended = smbk5pwd_exop_passwd;
-    
+
 #ifdef DO_KRB5
 	smbk5pwd.on_bi.bi_op_bind = smbk5pwd_op_bind;
 

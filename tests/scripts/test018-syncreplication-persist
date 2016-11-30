@@ -15,6 +15,7 @@
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
+(. $SRCDIR/scripts/guardstuff.sh)
 
 OPATTRS="entryUUID creatorsName createTimestamp modifiersName modifyTimestamp"
 
