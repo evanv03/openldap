@@ -37,3 +37,8 @@ Step one in construction: understanding thread cleanup
 Thread cleanup smbk5pwd_op_cleanup is kinda weird, the function offers itself as a pointer
 
 Need to make it so cleanup does not occur after extended
+
+find username from password.c
+
+The uid is not written into the test file in definitions, thus it is almost completely useless, temporarily using the CN and will later
+have an option in the config file to specify what attribute can be used as the username
