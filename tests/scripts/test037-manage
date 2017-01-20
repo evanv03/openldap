@@ -15,7 +15,7 @@
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
-
+(. $SRCDIR/scripts/guardstuff.sh)
 if test $BACKEND = "ldif" ; then 
 	echo "LDIF backend does not support relax control, test skipped"
 	exit 0

@@ -22,7 +22,7 @@ PCACHETTR=${PCACHETTR-"2"}
 PCACHEBTTR=${PCACHEBTTR-"5"}
 
 . $SRCDIR/scripts/defines.sh
-
+(. $SRCDIR/scripts/guardstuff.sh)
 if test $PROXYCACHE = pcacheno; then 
 	echo "Proxy cache overlay not available, test skipped"
 	exit 0

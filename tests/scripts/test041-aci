@@ -21,6 +21,7 @@ esac
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
+(. $SRCDIR/scripts/guardstuff.sh)
 
 if test "$ACI" = "acino" ; then
 	echo "ACI not enabled, test skipped"

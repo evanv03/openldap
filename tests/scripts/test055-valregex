@@ -15,6 +15,8 @@
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
+(. $SRCDIR/scripts/guardstuff.sh)
+
 LVL=acl
 
 mkdir -p $TESTDIR $DBDIR1

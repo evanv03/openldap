@@ -17,7 +17,7 @@
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
-
+(. $SRCDIR/scripts/guardstuff.sh)
 if test $BACKEND = null; then
 	echo "Limits irrelevant to $BACKEND backend, test skipped"
 	exit 0

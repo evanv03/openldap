@@ -22,6 +22,7 @@
 
 echo "Running defines.sh"
 . $SRCDIR/scripts/defines.sh
+(. $SRCDIR/scripts/guardstuff.sh)
 
 test "x$INITIATION_RACE_TESTS" = "x" && INITIATION_RACE_TESTS=1
 

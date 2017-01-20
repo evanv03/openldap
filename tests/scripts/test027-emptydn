@@ -14,7 +14,7 @@
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
-
+(. $SRCDIR/scripts/guardstuff.sh)
 mkdir -p $TESTDIR $DBDIR1 $DBDIR2
 
 . $CONFFILTER $BACKEND $MONITORDB < $EMPTYDNCONF > $CONF1

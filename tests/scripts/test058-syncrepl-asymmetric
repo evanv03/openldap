@@ -121,6 +121,7 @@ fi
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
+(. $SRCDIR/scripts/guardstuff.sh)
 
 if test $SYNCPROV = syncprovno; then
 	echo "Syncrepl provider overlay not available, test skipped"

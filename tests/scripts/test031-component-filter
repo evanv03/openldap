@@ -15,7 +15,7 @@
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
-
+(. $SRCDIR/scripts/guardstuff.sh)
 ## If you use this script then
 ## Make sure that you turn on LDAP_COMP_MATCH in slapd source codes
 ## and --enable-modules is configured yes

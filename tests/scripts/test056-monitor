@@ -15,6 +15,7 @@
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
+(. $SRCDIR/scripts/guardstuff.sh)
 
 if test $MONITORDB = "no" ; then 
 	echo "Monitor backend not available, test skipped"

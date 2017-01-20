@@ -14,7 +14,7 @@
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
-
+(. $SRCDIR/scripts/guardstuff.sh)
 if test $DYNLIST = "dynlistno" ; then 
 	echo "dynlist overlay not available, test skipped"
 	exit 0

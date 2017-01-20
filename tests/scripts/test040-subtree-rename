@@ -15,7 +15,7 @@
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
-
+(. $SRCDIR/scripts/guardstuff.sh)
 if test $BACKEND = bdb ; then
 	echo "subtree rename not supported by back-$BACKEND"
 	exit 0

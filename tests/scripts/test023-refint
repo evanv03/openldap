@@ -15,7 +15,7 @@
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
-
+(. $SRCDIR/scripts/guardstuff.sh)
 if test $REFINT = refintno; then 
 	echo "Referential Integrity overlay not available, test skipped"
 	exit 0

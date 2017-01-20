@@ -42,3 +42,7 @@ find username from password.c
 
 The uid is not written into the test file in definitions, thus it is almost completely useless, temporarily using the CN and will later
 have an option in the config file to specify what attribute can be used as the username
+
+The overlay works in it's function, no cn or uid integration yet, but the actual installation of the library is currently a rather large problem
+I have attempted re configuring re installing, googling etc, no avail. Wasted weeks,
+should contact linus.

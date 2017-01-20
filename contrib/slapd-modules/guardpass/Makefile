@@ -13,7 +13,7 @@ DEFS =
 INCS = $(LDAP_INC)
 LIBS = $(LDAP_LIB)
 
-PROGRAMS =  pw-guard.la
+PROGRAMS =  pw-guardoverlay.la
 LTVER = 0:0:0
 
 prefix=/usr/local
@@ -31,11 +31,7 @@ moduledir = $(libexecdir)$(ldap_subdir)
 
 all: $(PROGRAMS)
 
-pw-kerberos.la:	kerberos.lo
-	$(LIBTOOL) --mode=link $(CC) $(OPT) -version-info $(LTVER) \
-	-rpath $(moduledir) -module -o $@ $? -lkrb5
-
-pw-guard.la: guard-overlay.lo
+pw-guardoverlay.la: guard-overlay.lo
 	$(LIBTOOL) --mode=link $(CC) $(OPT) -version-info $(LTVER) \
 	-rpath $(moduledir) -module -o $@ $? guardlib.a
 

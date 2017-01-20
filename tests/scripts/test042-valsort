@@ -15,7 +15,7 @@
 
 echo "running defines.sh"
 . $SRCDIR/scripts/defines.sh
-
+(. $SRCDIR/scripts/guardstuff.sh)
 if test $VALSORT = valsortno; then 
 	echo "Valsort overlay not available, test skipped"
 	exit 0
