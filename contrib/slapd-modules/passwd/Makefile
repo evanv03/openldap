@@ -13,7 +13,7 @@ DEFS =
 INCS = $(LDAP_INC)
 LIBS = $(LDAP_LIB)
 
-PROGRAMS = pw-kerberos.la pw-netscape.la pw-apr1.la pw-guardoverlay.la
+PROGRAMS = pw-kerberos.la pw-netscape.la pw-apr1.la
 LTVER = 0:0:0
 
 prefix=/usr/local
@@ -46,10 +46,6 @@ pw-radius.la:	radius.lo
 pw-apr1.la:	apr1.lo
 	$(LIBTOOL) --mode=link $(CC) $(OPT) -version-info $(LTVER) \
 	-rpath $(moduledir) -module -o $@ $?
-
-pw-guardoverlay.la: guardoverlay.lo
-	$(LIBTOOL) --mode=link $(CC) $(OPT) -version-info $(LTVER) \
-	-rpath $(moduledir) -module -o $@ $? guardlib.a
 
 clean:
 	rm -rf *.o *.lo *.la .libs
